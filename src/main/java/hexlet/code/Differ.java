@@ -49,6 +49,7 @@ class Differ {
 
         StringBuilder sb = new StringBuilder();
         diff.forEach((k, v) -> sb.append(k + ": " + v + "\n"));
+        sb.insert(0, "{\n").append("}\n");
         return sb.toString();
 
     }
