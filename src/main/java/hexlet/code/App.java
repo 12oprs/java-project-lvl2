@@ -5,10 +5,10 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
 
-import java.io.File;
-import java.math.BigInteger;
-import java.nio.file.Files;
-import java.security.MessageDigest;
+
+
+
+
 import java.util.concurrent.Callable;
 
 @Command(name = "gendiff", mixinStandardHelpOptions = true, version = "gendiff 1.0",
@@ -26,17 +26,16 @@ class App implements Callable<Integer> {
     private String format = "stylish";
 
     @Override
-    public Integer call() throws Exception { 
+    public Integer call() throws Exception {
         Differ differ = new Differ(filepath1, filepath2);
         System.out.println(differ.generate());
         return 0;
     }
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		int exitCode = new CommandLine(new App()).execute(args);
+        int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
 
-	
-}
+    }
 }

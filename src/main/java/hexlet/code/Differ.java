@@ -9,28 +9,28 @@ import java.util.Comparator;
 import java.util.TreeMap;
 
 class Differ {
-	
-	private String filepath1;
-	private String filepath2;
 
-	Differ(final String filepath1, final String filepath2) {
-		this.filepath1 = filepath1;
-		this.filepath2 = filepath2;
-	}
+    private String filepath1;
+    private String filepath2;
 
-	private Map<String, String> parseFile(final String filepath) throws Exception {
-	String jsonSource = Files.readString(Paths.get(filepath));
-	ObjectMapper mapper = new ObjectMapper();
-	Map<String, String> results = mapper.readValue(jsonSource, new TypeReference<Map<String, String>>() { } );
-	return results;
-	}
-	
-	public String generate() throws Exception {
+    Differ(final String path1, final String path2) {
+        this.filepath1 = path1;
+        this.filepath2 = path2;
+    }
 
-		Map<String, String> json1 = parseFile(filepath1);
-		Map<String, String> json2 = parseFile(filepath2);
-		Map<String, String> diff = new TreeMap<>(Comparator.comparing((key) -> key.toString().substring(1))
-                .thenComparing((key) -> key.toString().substring(0, 1), Comparator.reverseOrder()));
+    private Map<String, String> parseFile(final String filepath) throws Exception {
+        String jsonSource = Files.readString(Paths.get(filepath));
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, String> results = mapper.readValue(jsonSource, new TypeReference<Map<String, String>>() { });
+        return results;
+    }
+
+    public String generate() throws Exception {
+
+        Map<String, String> json1 = parseFile(filepath1);
+        Map<String, String> json2 = parseFile(filepath2);
+        Map<String, String> diff = new TreeMap<>(Comparator.comparing((key) -> key.toString().substring(1))
+                    .thenComparing((key) -> key.toString().substring(0, 1), Comparator.reverseOrder()));
 
         for (Map.Entry<String, String> entry : json1.entrySet()) {
             if (json2.containsKey(entry.getKey())) {
@@ -49,9 +49,9 @@ class Differ {
 
         StringBuilder sb = new StringBuilder();
         diff.forEach((k, v) -> sb.append(k + ": " + v + "\n"));
-		return sb.toString();
+        return sb.toString();
 
-	}
+    }
 
 
 }
