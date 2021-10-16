@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
 @Command(name = "gendiff", mixinStandardHelpOptions = true, version = "gendiff 1.0",
          description = "Compares two configuration files and shows a difference.")
 
-class GenDiff implements Callable<Integer> {
+class App implements Callable<Integer> {
 
     @Parameters(index = "0", description = "path to first file")
     private String filepath1;
@@ -27,16 +27,16 @@ class GenDiff implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception { 
-
+        Differ differ = new Differ(filepath1, filepath2);
+        System.out.println(differ.generate());
         return 0;
     }
-}
 
-public class App {
 	public static void main(String[] args) {
 
-		int exitCode = new CommandLine(new GenDiff()).execute(args);
+		int exitCode = new CommandLine(new App()).execute(args);
         System.exit(exitCode);
 
-	}
+	
+}
 }
