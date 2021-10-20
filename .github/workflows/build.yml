@@ -1,4 +1,4 @@
-name: myAction
+name: build
 
 on: [push]
 
@@ -18,3 +18,13 @@ jobs:
         uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
       - name: Build with Gradle
         run: make build
+        
+      - name: Code Climate Coverage Action
+        uses: paambaati/codeclimate-action@v3.0.0
+        env:
+          CC_TEST_REPORTER_ID: ${{secrets.CC_TEST_REPORTER_ID}}
+          JACOCO_SOURCE_PATH: "${{github.workspace}}/src/main/java"
+        with:
+         coverageCommand: make report
+         coverageLocations: "${{github.workspace}}/build/reports/jacoco/test/jacocoTestReport.xml:jacoco"
+
