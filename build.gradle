@@ -5,6 +5,7 @@ plugins {
 	id 'checkstyle'
 	id 'java'
 	id 'jacoco'
+	id 'com.adarshr.test-logger' version '3.0.0'
 }
 
 group = 'hexlet.code'
