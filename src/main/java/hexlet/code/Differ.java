@@ -1,9 +1,5 @@
 package hexlet.code;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.Map;
 import java.util.Comparator;
 import java.util.TreeMap;
@@ -18,34 +14,27 @@ class Differ {
         this.filepath2 = path2;
     }
 
-    private Map<String, String> parseFile(final String filepath) throws Exception {
-        String jsonSource = Files.readString(Paths.get(filepath));
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, String> results = mapper.readValue(jsonSource, new TypeReference<Map<String, String>>() { });
-        return results;
-    }
-
     public String generate() throws Exception {
 
-        Map<String, String> json1 = parseFile(filepath1);
-        Map<String, String> json2 = parseFile(filepath2);
+        Map<String, String> file1 = Parser.parseFile(filepath1);
+        Map<String, String> file2 = Parser.parseFile(filepath2);
         Map<String, String> diff = new TreeMap<>(Comparator.comparing((key) -> key.toString().substring(1))
                     .thenComparing((key) -> key.toString().substring(0, 1), Comparator.reverseOrder()));
 
-        for (Map.Entry<String, String> entry : json1.entrySet()) {
-            if (json2.containsKey(entry.getKey())) {
-                if (json2.get(entry.getKey()).equals(entry.getValue())) {
+        for (Map.Entry<String, String> entry : file1.entrySet()) {
+            if (file2.containsKey(entry.getKey())) {
+                if (file2.get(entry.getKey()).equals(entry.getValue())) {
                     diff.put("  " + entry.getKey(), entry.getValue());
                 } else {
                     diff.put("- " + entry.getKey(), entry.getValue());
-                    diff.put("+ " + entry.getKey(), json2.get(entry.getKey()));
+                    diff.put("+ " + entry.getKey(), file2.get(entry.getKey()));
                 }
-                json2.remove(entry.getKey());
+                file2.remove(entry.getKey());
             } else {
                 diff.put("- " + entry.getKey(), entry.getValue());
             }
         }
-        json2.forEach((k, v) -> diff.put("+ " + k, v));
+        file2.forEach((k, v) -> diff.put("+ " + k, v));
 
         StringBuilder sb = new StringBuilder();
         diff.forEach((k, v) -> sb.append(k + ": " + v + "\n"));
