@@ -43,7 +43,6 @@ class AppTest {
     void jsonTest() throws Exception {
         Differ testDf = new Differ(filePath1, filePath2);
         assertEquals(expected, testDf.generate());
-
     }
 
     @Test
@@ -51,5 +50,5 @@ class AppTest {
     void yamlTest() throws Exception {
         Differ testDf = new Differ(filePath3, filePath4);
         assertEquals(expected, testDf.generate());
-
+    }
 }
