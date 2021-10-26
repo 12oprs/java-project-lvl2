@@ -6,18 +6,18 @@ import java.util.TreeMap;
 
 class Differ {
 
-    private String filepath1;
-    private String filepath2;
+    // private String filepath1;
+    // private String filepath2;
     private String formatType;
 
-    Differ(final String path1, final String path2, String format) {
-        this.filepath1 = path1;
-        this.filepath2 = path2;
-        this.formatType = format;
-    }
+    // Differ(final String path1, final String path2, String format) {
+    //     this.filepath1 = path1;
+    //     this.filepath2 = path2;
+    //     this.formatType = format;
+    // }
 
-    public String generate() throws Exception {
-
+    public String generate(final String filepath1, final String filepath2, String formatName) throws Exception {
+        this.formatType = formatName;
         Map<String, Object> file1 = Parser.parseFile(filepath1);
         Map<String, Object> file2 = Parser.parseFile(filepath2);
         Map<String, Object> diff = new TreeMap<>(Comparator.comparing((key) -> key.toString().substring(1))

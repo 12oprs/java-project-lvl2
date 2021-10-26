@@ -21,12 +21,12 @@ class App implements Callable<Integer> {
         names = {"-f", "--format"},
         description = "output format [default: ${DEFAULT-VALUE}]",
         defaultValue = "stylish")
-    private String format;
+    private String formatName;
 
     @Override
     public Integer call() throws Exception {
-        Differ differ = new Differ(filepath1, filepath2, format);
-        System.out.println(differ.generate());
+        Differ differ = new Differ();
+        System.out.println(differ.generate(filepath1, filepath2, formatName));
         return 0;
     }
 
