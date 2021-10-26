@@ -46,14 +46,55 @@ class Differ {
     }
 
     private String formatter(Map<String, Object> diff) {
+        StringBuilder sb = new StringBuilder();
         switch (formatType) {
-            case "stylish":
-                StringBuilder sb = new StringBuilder();
-                diff.forEach((k, v) -> sb.append("  ").append(k).append(": ").append(v).append("\n"));
-                sb.insert(0, "{\n").append("}\n");
-                return sb.toString();
+            case "plain":
+                for (Map.Entry<String, Object> entry : diff.entrySet()) {
+                    String currentKey = entry.getKey().substring(2);
+                    String currentValue = formatValue(entry.getValue());
+                    String previosValue = formatValue(diff.get("-".concat(entry.getKey().substring(1))));
+                    Boolean updated = entry.getKey().startsWith("+")
+                        && diff.containsKey("-".concat(entry.getKey().substring(1)));
+                    Boolean added = entry.getKey().startsWith("+");
+                    Boolean removed = (entry.getKey().startsWith("-")
+                        && !diff.containsKey("+".concat(entry.getKey().substring(1))));
+
+                    if (updated) {
+                        sb.append("Property '" + currentKey + "' was updated. From ")
+                            .append(previosValue + " to " + currentValue + "\n");
+                        continue;
+                    }
+                    if (added) {
+                        sb.append("Property '" + currentKey + "' was added with value: ")
+                            .append(currentValue + "\n");
+                        continue;
+                    }
+                    if (removed) {
+                        sb.append("Property '" + currentKey + "' was removed" + "\n");
+                    }
+                }
+                break;
+            case "no-format":
+                sb.append(diff.toString());
+                break;
             default:
-                return diff.toString();
+                diff.forEach((k, v) -> sb.append("  " + k + ": " + v + "\n"));
+                sb.insert(0, "{\n").append("}\n");
         }
+        return sb.toString();
+    }
+
+    private String formatValue(Object o) {
+        String result;
+        if (o == null) {
+            result = "null";
+        } else if (o instanceof Number || o instanceof Boolean || o.equals("null")) {
+            result = o.toString();
+        } else if (o instanceof String) {
+            result = "'" + o + "'";
+        } else {
+            result = "[complex value]";
+        }
+        return result;
     }
 }
