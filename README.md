@@ -11,6 +11,9 @@ https://asciinema.org/a/ocP4XLo9sH6lAci4vsTlsjZoA
 #### Сравнение файлов с вложенными структурами и форматирование вывода:
 https://asciinema.org/a/6uiIh4ou4SN5JeVu1LcyXu7ft
 
+#### Выбор формата вывода("stylish", "plain"):
+https://asciinema.org/a/FRaHejhWezG3eAdBwF4J8gADu
+
 ### Hexlet tests and linter status:
 [![Actions Status](https://github.com/12oprs/java-project-lvl2/workflows/hexlet-check/badge.svg)](https://github.com/12oprs/java-project-lvl2/actions)
 
