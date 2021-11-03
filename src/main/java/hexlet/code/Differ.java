@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Comparator;
 import java.util.TreeMap;
 
-class Differ {
+public class Differ {
 
     public String generate(final String filepath1, final String filepath2, String formatName) throws Exception {
         Map<String, Object> file1 = Parser.parseFile(filepath1);
