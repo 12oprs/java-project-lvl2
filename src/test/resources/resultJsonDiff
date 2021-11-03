@@ -1,18 +1,34 @@
 {
-  "chars1": ["a", "b", "c"],
-  "chars2": false,
-  "checked": true,
-  "default": ["value1", "value2"],
-  "id": null,
-  "key2": "value2",
-  "numbers1": [1, 2, 3, 4],
-  "numbers2": [22, 33, 44, 55],
-  "numbers4": [4, 5, 6],
-  "obj1": {
-    "nestedKey": "value",
-    "isNested": true
-  }
-  "setting1": "Another value",
-  "setting2": 300,
-  "setting3": "none"
+	" ":{
+		"chars1":["a","b","c"],
+		"numbers1":[1,2,3,4]
+	},
+	"+":{
+		"setting2":300,
+		"key2":"value2",
+		"setting3":"none",
+		"chars2":false,
+		"default":["value1","value2"],
+		"setting1":"Another value",
+		"numbers4":[4,5,6],
+		"numbers2":[22,33,44,55],
+		"checked":true,
+		"obj1":{
+			"nestedKey":"value",
+			"isNested":true
+		},
+		"id":"null"
+	},
+	"-":{
+		"key1":"value1",
+		"setting2":200,
+		"setting3":true,
+		"chars2":["d","e","f"],
+		"default":null,
+		"setting1":"Some value",
+		"numbers3":[3,4,5],
+		"numbers2":[2,3,4,5],
+		"checked":false,
+		"id":45
+	}
 }

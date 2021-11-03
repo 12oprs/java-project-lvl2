@@ -38,7 +38,7 @@ class AppTest {
         String pathToPlainResult = Paths.get(RESOURCE_DIRECTORY, RESULT2).toFile().getAbsolutePath();
         String[] temp2 = Files.lines(Path.of(pathToPlainResult))
                 .toArray(String[]::new);
-        sb = new StringBuilder();;
+        sb.setLength(0);
         for (String s : temp2) {
             sb.append(s).append("\n");
         }
@@ -47,11 +47,12 @@ class AppTest {
         String pathToJsonResult = Paths.get(RESOURCE_DIRECTORY, RESULT3).toFile().getAbsolutePath();
         String[] temp3 = Files.lines(Path.of(pathToJsonResult))
                 .toArray(String[]::new);
-        sb = new StringBuilder();;
+        sb.setLength(0);
         for (String s : temp3) {
             sb.append(s).append("\n");
         }
-        expectedJson = sb.toString();
+        sb.deleteCharAt(sb.length() - 1);
+        expectedJson = sb.toString();   //.replaceAll("\n", "").replaceAll("\t", "");
     }
 
     @Test
@@ -80,6 +81,7 @@ class AppTest {
         Differ testDf = new Differ();
         assertEquals(expectedPlain, testDf.generate(filePath1, filePath2, "plain"));
     }
+
     @Test
     @DisplayName("Run app with json formatter")
     void formatterJsonTest() throws Exception {
