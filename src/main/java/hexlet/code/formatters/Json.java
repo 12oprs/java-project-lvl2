@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 public class Json {
 
     private static final String[] PATTERNS = {
-                "\\{|.(?=})|},|}\",|[[\\d][]][\\w]],(?=\")|:\".[^}]*?\",(?=\")",
-                "\\{\n|\n(?=[^}])|}"
+        "\\{|.(?=})|},|}\",|[[\\d][]][\\w]],(?=\")|:\".[^}]*?\",(?=\")",
+        "\\{\n|\n(?=[^}])|}"
         };
 
     public static String format(final Map<String, Object> diff) throws Exception {
@@ -35,7 +35,7 @@ public class Json {
         return result;
     }
 
-     private static String markUp(final String target) {
+    private static String markUp(final String target) {
         StringBuilder result = new StringBuilder();
         Pattern p = Pattern.compile(PATTERNS[0]);
         Matcher m = p.matcher(target);
