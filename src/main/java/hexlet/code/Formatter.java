@@ -7,7 +7,7 @@ import java.util.Map;
 
 class Formatter {
 
-    public static String format(Map<String, Object> diff, String formatName) throws Exception {
+    public static String format(final Map<String, Object> diff, String formatName) throws Exception {
         String result = new String();
         switch (formatName) {
             case "plain":
