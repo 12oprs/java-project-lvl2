@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class Plain {
 
-    public static String format(Map<String, Object> diff) {
+    public static String format(final Map<String, Object> diff) {
         StringBuilder result = new StringBuilder();
         for (Map.Entry<String, Object> entry : diff.entrySet()) {
             String currentKey = entry.getKey().substring(2);
@@ -33,7 +33,7 @@ public class Plain {
         return result.toString();
     }
 
-    private static String formatValue(Object o) {
+    private static String formatValue(final Object o) {
         String result;
         if (o == null) {
             result = "null";

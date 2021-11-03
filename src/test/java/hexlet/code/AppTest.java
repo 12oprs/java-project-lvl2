@@ -60,8 +60,7 @@ class AppTest {
     void jsonTest() throws Exception {
         String filePath1 = Paths.get(RESOURCE_DIRECTORY, FILE1).toFile().getAbsolutePath();
         String filePath2 = Paths.get(RESOURCE_DIRECTORY, FILE2).toFile().getAbsolutePath();
-        Differ testDf = new Differ();
-        assertEquals(expected, testDf.generate(filePath1, filePath2, "stylish"));
+        assertEquals(expected, Differ.generate(filePath1, filePath2, "stylish"));
     }
 
     @Test
@@ -69,8 +68,7 @@ class AppTest {
     void yamlTest() throws Exception {
         String filePath3 = Paths.get(RESOURCE_DIRECTORY, FILE3).toFile().getAbsolutePath();
         String filePath4 = Paths.get(RESOURCE_DIRECTORY, FILE4).toFile().getAbsolutePath();
-        Differ testDf = new Differ();
-        assertEquals(expected, testDf.generate(filePath3, filePath4, "stylish"));
+        assertEquals(expected, Differ.generate(filePath3, filePath4, "stylish"));
     }
 
     @Test
@@ -78,8 +76,7 @@ class AppTest {
     void formatterPlainTest() throws Exception {
         String filePath1 = Paths.get(RESOURCE_DIRECTORY, FILE1).toFile().getAbsolutePath();
         String filePath2 = Paths.get(RESOURCE_DIRECTORY, FILE2).toFile().getAbsolutePath();
-        Differ testDf = new Differ();
-        assertEquals(expectedPlain, testDf.generate(filePath1, filePath2, "plain"));
+        assertEquals(expectedPlain, Differ.generate(filePath1, filePath2, "plain"));
     }
 
     @Test
@@ -87,7 +84,6 @@ class AppTest {
     void formatterJsonTest() throws Exception {
         String filePath1 = Paths.get(RESOURCE_DIRECTORY, FILE1).toFile().getAbsolutePath();
         String filePath2 = Paths.get(RESOURCE_DIRECTORY, FILE2).toFile().getAbsolutePath();
-        Differ testDf = new Differ();
-        assertEquals(expectedJson, testDf.generate(filePath1, filePath2, "json"));
+        assertEquals(expectedJson, Differ.generate(filePath1, filePath2, "json"));
     }
 }
