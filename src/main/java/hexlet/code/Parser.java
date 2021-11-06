@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.util.Map;
 import java.io.File;
 
-class Parser {
+public class Parser {
 
     public static Map<String, Object> parseFile(final String filepath) throws Exception {
         File source = new File(filepath);

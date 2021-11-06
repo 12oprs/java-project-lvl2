@@ -1,50 +1,58 @@
 package hexlet.code.formatters;
 
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Plain {
 
-    public static String format(final Map<String, Object> diff) {
-        StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, Object> entry : diff.entrySet()) {
-            String currentKey = entry.getKey().substring(2);
-            String currentValue = formatValue(entry.getValue());
-            String previosValue = formatValue(diff.get("-".concat(entry.getKey().substring(1))));
-            Boolean updated = entry.getKey().startsWith("+")
-                && diff.containsKey("-".concat(entry.getKey().substring(1)));
-            Boolean added = entry.getKey().startsWith("+");
-            Boolean removed = (entry.getKey().startsWith("-")
-                && !diff.containsKey("+".concat(entry.getKey().substring(1))));
+    public static String format(final String diff) {
+        StringBuilder buffer = new StringBuilder();
+        Pattern p = Pattern.compile("(?<sign>[+-])\\s(?<key>[\\d\\w]+?)=(?<value>.+?)(?=,\\s[-+\\s]|}$)");
+        Matcher m = p.matcher(diff); //.replaceAll("\\s\\s.+?,\\s(?=\\s|[+-])", ""));
 
-            if (updated) {
-                result.append("Property '" + currentKey + "' was updated. From ")
-                    .append(previosValue + " to " + currentValue + "\n");
-                continue;
+        String oldKey = "";
+        String oldValue = "";
+        String key = "";
+        String value = "";
+        String sign = "";
+        boolean isNotAdded = false;
+
+        while (m.find()) {
+            sign = m.group("sign");
+            key = m.group("key");
+            value = m.group("value");
+            if (sign.equals("-")) {
+                oldKey = key;
+                oldValue = value;
+                isNotAdded = true;
             }
-            if (added) {
-                result.append("Property '" + currentKey + "' was added with value: ")
-                    .append(currentValue + "\n");
+            if (sign.equals("+") && key.equals(oldKey)) {
+                buffer.append("Property '" + key + "' was updated.")
+                    .append(" From '" + oldValue + "' to '" + value + "'\n");
                 continue;
-            }
-            if (removed) {
-                result.append("Property '" + currentKey + "' was removed" + "\n");
+            } else if (sign.equals("+")) {
+                if (isNotAdded) {
+                    buffer.append("Property '" + oldKey + "' was removed\n");
+                    isNotAdded = false;
+                }
+                buffer.append("Property '" + key + "' was added with value: '" + value + "'\n");
             }
         }
-        return result.toString();
-    }
-
-    private static String formatValue(final Object o) {
-        String result;
-        if (o == null) {
-            result = "null";
-        } else if (o instanceof Number || o instanceof Boolean || o.equals("null")) {
-            result = o.toString();
-        } else if (o instanceof String) {
-            result = "'" + o + "'";
-        } else {
-            result = "[complex value]";
-        }
+        String result = buffer.toString()
+            .replaceAll("'[\\[\\{].*?[]}]'", "[complex value]")
+            .replaceAll("(?<=From |to )'(?=true|false|null)|(?<=true|false|null)'(?= to|\n)", "");
+        result = removeBracesFromInt(result);
         return result;
     }
 
+    private static String removeBracesFromInt(final String diff) {
+        StringBuilder buffer = new StringBuilder();
+        Pattern p = Pattern.compile("'\\d+?'");
+        Matcher m = p.matcher(diff);
+        while (m.find()) {
+            m.appendReplacement(buffer, m.group().substring(1, m.group().length() - 1));
+        }
+        m.appendTail(buffer);
+        return buffer.toString();
+    }
 }

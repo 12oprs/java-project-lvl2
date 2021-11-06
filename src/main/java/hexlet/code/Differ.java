@@ -6,7 +6,7 @@ import java.util.TreeMap;
 
 public class Differ {
 
-    public static String generate(final String filepath1, final String filepath2, String formatName) throws Exception {
+    public static String generate(final String filepath1, final String filepath2) throws Exception {
         Map<String, Object> file1 = Parser.parseFile(filepath1);
         Map<String, Object> file2 = Parser.parseFile(filepath2);
         Map<String, Object> diff = new TreeMap<>(Comparator.comparing((key) -> key.toString().substring(1))
@@ -30,6 +30,6 @@ public class Differ {
         }
         file2.forEach((k, v) -> diff.put("+ " + k, v));
 
-        return Formatter.format(diff, formatName);
+        return diff.toString();
     }
 }

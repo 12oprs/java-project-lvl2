@@ -19,13 +19,15 @@ class App implements Callable<Integer> {
 
     @Option(
         names = {"-f", "--format"},
-        description = "output format [default: ${DEFAULT-VALUE}]",
+        description = "output format: stylish, plain, json, no-format [default: ${DEFAULT-VALUE}]",
         defaultValue = "stylish")
     private String formatName;
 
     @Override
     public Integer call() throws Exception {
-        System.out.println(Differ.generate(filepath1, filepath2, formatName));
+        String diff = Differ.generate(filepath1, filepath2);
+        String result = Formatter.format(diff, formatName);
+        System.out.println(result);
         return 0;
     }
 

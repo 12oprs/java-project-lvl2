@@ -1,71 +1,73 @@
 package hexlet.code.formatters;
 
-import java.util.Map;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.stream.Collectors;
-import java.util.List;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Json {
 
-    private static final String[] PATTERNS = {
-        "\\{|.(?=})|},|}\",|[[\\d][]][\\w]],(?=\")|:\".[^}]*?\",(?=\")",
-        "\\{\n|\n(?=[^}])|}"
-        };
-
-    public static String format(final Map<String, Object> diff) throws Exception {
+    public static String format(final String diff) throws Exception {
         String result = "";
-        Map<String, List<Map.Entry<String, Object>>> buffer = diff.entrySet().stream()
-            .collect(Collectors.groupingBy(entry -> entry.getKey().substring(0, 1)));
-
-        Map<String, Map<String, Object>> diffJsonStyle = new HashMap<>();
-        buffer.forEach((k, v) -> {
-            Map<String, Object> map = new HashMap<>();
-            v.forEach(entry -> map.put(entry.getKey().substring(2), entry.getValue()));
-            diffJsonStyle.put(k.toString(), map);
-        }
-        );
-
-        ObjectMapper mapper = new ObjectMapper();
-        result = mapper.writeValueAsString(diffJsonStyle);
-        result = markUp(result);
-        result = addTabs(result);
+        result = markUp(diff);
+        result = sort(result);
+        result = addBraces(result);
+        result = result.replaceAll("=", ":");
         return result;
     }
 
-    private static String markUp(final String target) {
-        StringBuilder result = new StringBuilder();
-        Pattern p = Pattern.compile(PATTERNS[0]);
-        Matcher m = p.matcher(target);
+    private static String markUp(final String diff) {
+        StringBuilder buffer = new StringBuilder();
+        Pattern p = Pattern.compile("^\\{|.(?=}$)|},|=[\\[\\w\\d][^}]*?[]\\w\\d],(?=\\s[+\\-\\s])");
+        Matcher m = p.matcher(diff);
         while (m.find()) {
-            //if (flag == 1)
-            m.appendReplacement(result, m.group() + "\n");
-            //if (flag == 2) m.appendReplacement(result, m.group() + "\t");
-
+            m.appendReplacement(buffer, m.group() + "\n");
         }
-        m.appendTail(result);
-        return result.toString();
+        m.appendTail(buffer);
+        return buffer.toString();
     }
 
-    private static String addTabs(final String target) {
-        StringBuilder result = new StringBuilder();
-        Pattern p = Pattern.compile(PATTERNS[1]);
-        Matcher m = p.matcher(target);
-        int n = 0;
+    private static String addBraces(final String diff) {
+        StringBuilder buffer = new StringBuilder();
+        Pattern p = Pattern.compile("(?!true|false|null)(?<=\\[|,.|=|\\{)[^\\[{\\d,\\]=\n]+\\d*|\\w+(?==)");
+        Matcher m = p.matcher(diff);
         while (m.find()) {
-            if (m.group().contains("{")) {
-                n++;
-            } else if (m.group().contains("}")) {
-                n--;
-                m.appendReplacement(result, "\t".repeat(n) + m.group());
-                continue;
-            }
-            m.appendReplacement(result, m.group() + "\t".repeat(n));
-
+            m.appendReplacement(buffer, "\"" + m.group() + "\"");
         }
-        m.appendTail(result);
-        return result.toString();
+        m.appendTail(buffer);
+        return buffer.toString();
+    }
+
+    private static String sort(String target) {
+        StringBuilder buffer = new StringBuilder();
+        String[] temp = target.split("\\n");
+        buffer.append("\t\" \":{\n");
+        for (String s : temp) {
+            if (s.startsWith("  ")) {
+                buffer.append("\t\t").append(s.trim()).append("\n");
+            }
+        }
+        if (buffer.charAt(buffer.length() - 2) == ',') {
+            buffer.deleteCharAt(buffer.length() - 2);
+        }
+        buffer.append("\t},\n").append("\t\"+\":{\n");
+        for (String s : temp) {
+            if (s.startsWith(" + ")) {
+                buffer.append("\t\t").append(s.trim().substring(2)).append("\n");
+            }
+        }
+        if (buffer.charAt(buffer.length() - 2) == ',') {
+            buffer.deleteCharAt(buffer.length() - 2);
+        }
+        buffer.append("\t},\n").append("\t\"-\":{\n");
+        for (String s : temp) {
+            if (s.startsWith(" - ")) {
+                buffer.append("\t\t").append(s.trim().substring(2)).append("\n");
+            }
+        }
+        if (buffer.charAt(buffer.length() - 2) == ',') {
+            buffer.deleteCharAt(buffer.length() - 2);
+        }
+        buffer.append("\t}\n");
+        buffer.insert(0, "{\n").append("}");
+        return buffer.toString();
     }
 }
