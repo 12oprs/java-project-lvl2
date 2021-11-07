@@ -33,6 +33,7 @@ class AppTest {
         for (String s : temp1) {
             sb.append(s).append("\n");
         }
+        sb.deleteCharAt(sb.length() - 1);
         expected = sb.toString();
 
         String pathToPlainResult = Paths.get(RESOURCE_DIRECTORY, RESULT2).toFile().getAbsolutePath();
