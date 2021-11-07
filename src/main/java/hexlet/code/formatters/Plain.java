@@ -30,6 +30,7 @@ public class Plain {
                 result.append("Property '" + currentKey + "' was removed" + "\n");
             }
         }
+        result.deleteCharAt(result.length() - 1);
         return result.toString();
     }
 

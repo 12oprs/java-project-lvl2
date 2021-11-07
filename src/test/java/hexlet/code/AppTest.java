@@ -43,6 +43,7 @@ class AppTest {
         for (String s : temp2) {
             sb.append(s).append("\n");
         }
+        sb.deleteCharAt(sb.length() - 1);
         expectedPlain = sb.toString();
 
         String pathToJsonResult = Paths.get(RESOURCE_DIRECTORY, RESULT3).toFile().getAbsolutePath();
