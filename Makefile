@@ -1,6 +1,6 @@
 #Makefile
 
- .DEFAULT_GOAL:=build-run
+.DEFAULT_GOAL:=build-run
 
 clean:
 	./gradlew clean
