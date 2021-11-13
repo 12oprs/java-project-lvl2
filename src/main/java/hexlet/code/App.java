@@ -19,7 +19,7 @@ class App implements Callable<Integer> {
 
     @Option(
         names = {"-f", "--format"},
-        description = "output format [default: ${DEFAULT-VALUE}]",
+        description = "output format: stylish, plain, json, no-format [default: ${DEFAULT-VALUE}]",
         defaultValue = "stylish")
     private String formatName;
 
