@@ -2,9 +2,10 @@ package hexlet.code;
 
 import java.util.Map;
 import java.util.Comparator;
-import java.util.TreeMap;
+import java.util.ArrayList;
 import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.util.List;
 
 public class Differ {
 
@@ -13,7 +14,6 @@ public class Differ {
     }
 
     public static String generate(final String filepath1, final String filepath2, String formatName) throws Exception {
-
         Map<String, Object> file1 = Parser.parseFile(
             new String(
                 Files.readAllBytes(
@@ -23,26 +23,40 @@ public class Differ {
                 Files.readAllBytes(
                     Paths.get(filepath2))));
 
-        Map<String, Object> diff = new TreeMap<>(Comparator.comparing((key) -> key.toString().substring(1))
-                    .thenComparing((key) -> key.toString().substring(0, 1), Comparator.reverseOrder()));
-
+        List<Map<String, Object>> diff = new ArrayList<>();
         for (Map.Entry<String, Object> entry : file1.entrySet()) {
             if (file2.containsKey(entry.getKey())) {
                 if (file2.get(entry.getKey()) == null) {
                     file2.replace(entry.getKey(), "null");
                 }
+                if (entry.getValue() == null) {
+                    file1.replace(entry.getKey(), "null");
+                }
                 if (file2.get(entry.getKey()).equals(entry.getValue())) {
-                    diff.put("  " + entry.getKey(), entry.getValue());
+                    diff.add(Map.of(
+                            "status", "nochanged",
+                            "fieldName", entry.getKey(),
+                            "value", entry.getValue()));
                 } else {
-                    diff.put("- " + entry.getKey(), entry.getValue());
-                    diff.put("+ " + entry.getKey(), file2.get(entry.getKey()));
+                    diff.add(Map.of(
+                            "status", "updated",
+                            "fieldName", entry.getKey(),
+                            "oldValue", entry.getValue(),
+                            "value", file2.get(entry.getKey())));
                 }
                 file2.remove(entry.getKey());
             } else {
-                diff.put("- " + entry.getKey(), entry.getValue());
+                diff.add(Map.of(
+                        "status", "removed",
+                        "fieldName", entry.getKey(),
+                        "value", entry.getValue()));
             }
         }
-        file2.forEach((k, v) -> diff.put("+ " + k, v));
+        file2.forEach((k, v) -> diff.add(Map.of(
+                "status", "added",
+                "fieldName", k,
+                "value", v)));
+        diff.sort(Comparator.comparing(map -> map.get("fieldName").toString()));
 
         return Formatter.format(diff, formatName);
     }
