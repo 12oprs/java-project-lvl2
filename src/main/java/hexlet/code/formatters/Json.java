@@ -1,71 +1,78 @@
 package hexlet.code.formatters;
 
 import java.util.Map;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.stream.Collectors;
 import java.util.List;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.TreeMap;
+import java.util.Comparator;
 
 public class Json {
 
-    private static final String[] PATTERNS = {
-        "\\{|.(?=})|},|}\",|[[\\d][]][\\w]],(?=\")|:\".[^}]*?\",(?=\")",
-        "\\{\n|\n(?=[^}])|}"
-        };
+    private static final String PATTERN =
+        "(?!null|false|true)\\w+(?=:)|(?!null|false|true)(?<=:)\\b[\\w\\s\\d]+?[^\\d][\\w]\\b(?=\\n)";
 
-    public static String format(final Map<String, Object> diff) throws Exception {
-        String result = "";
-        Map<String, List<Map.Entry<String, Object>>> buffer = diff.entrySet().stream()
-            .collect(Collectors.groupingBy(entry -> entry.getKey().substring(0, 1)));
+    private static Map<String, Object> nochangedMap;
+    private static Map<String, Object> addedMap;
+    private static Map<String, Object> removedMap;
 
-        Map<String, Map<String, Object>> diffJsonStyle = new HashMap<>();
-        buffer.forEach((k, v) -> {
-            Map<String, Object> map = new HashMap<>();
-            v.forEach(entry -> map.put(entry.getKey().substring(2), entry.getValue()));
-            diffJsonStyle.put(k.toString(), map);
-        }
-        );
+    public static String format(final List<Map<String, Object>> diff) throws Exception {
+        extractData(diff);
 
-        ObjectMapper mapper = new ObjectMapper();
-        result = mapper.writeValueAsString(diffJsonStyle);
-        result = markUp(result);
-        result = addTabs(result);
+        StringBuilder sb = new StringBuilder();
+        sb.append("\tadded:{\n");
+        addedMap.forEach((k, v) -> sb.append("\t\t" + k + ":" + v + "\n"));
+        sb.append("\t}\n");
+        sb.append("\tnochanged:{\n");
+        nochangedMap.forEach((k, v) -> sb.append("\t\t" + k + ":" + v + "\n"));
+        sb.append("\t}\n");
+        sb.append("\tremoved:{\n");
+        removedMap.forEach((k, v) -> sb.append("\t\t" + k + ":" + v + "\n"));
+        sb.append("\t}\n");
+        sb.insert(0, "{\n").append("}");
+        String result = sb.toString();
+        result = strInBraces(result);
         return result;
     }
 
-    private static String markUp(final String target) {
-        StringBuilder result = new StringBuilder();
-        Pattern p = Pattern.compile(PATTERNS[0]);
-        Matcher m = p.matcher(target);
-        while (m.find()) {
-            //if (flag == 1)
-            m.appendReplacement(result, m.group() + "\n");
-            //if (flag == 2) m.appendReplacement(result, m.group() + "\t");
-
-        }
-        m.appendTail(result);
-        return result.toString();
-    }
-
-    private static String addTabs(final String target) {
-        StringBuilder result = new StringBuilder();
-        Pattern p = Pattern.compile(PATTERNS[1]);
-        Matcher m = p.matcher(target);
-        int n = 0;
-        while (m.find()) {
-            if (m.group().contains("{")) {
-                n++;
-            } else if (m.group().contains("}")) {
-                n--;
-                m.appendReplacement(result, "\t".repeat(n) + m.group());
-                continue;
+    private static void extractData(final List<Map<String, Object>> diff) {
+        nochangedMap = new TreeMap<>(Comparator.naturalOrder());
+        addedMap = new TreeMap<>(Comparator.naturalOrder());
+        removedMap = new TreeMap<>(Comparator.naturalOrder());
+        for (Map<String, Object> map : diff) {
+            String status = map.get("status").toString();
+            String name = map.get("fieldName").toString();
+            String value = map.get("value").toString();
+            String oldValue = map.containsKey("oldValue") ? map.get("oldValue").toString() : "";
+            switch (status) {
+                case "nochanged":
+                    nochangedMap.put(name, value);
+                    break;
+                case "added":
+                    addedMap.put(name, value);
+                    break;
+                case "updated":
+                    addedMap.put(name, value);
+                    removedMap.put(name, oldValue);
+                    break;
+                case "removed":
+                    removedMap.put(name, value);
+                    break;
+                default:
+                    break;
             }
-            m.appendReplacement(result, m.group() + "\t".repeat(n));
+        }
+    }
 
+    private static String strInBraces(final String target) {
+        StringBuilder result = new StringBuilder();
+        Pattern p = Pattern.compile(PATTERN);
+        Matcher m = p.matcher(target);
+        while (m.find()) {
+            m.appendReplacement(result, "\"" + m.group() + "\"");
         }
         m.appendTail(result);
         return result.toString();
     }
+
 }

@@ -1,12 +1,40 @@
 package hexlet.code.formatters;
 
 import java.util.Map;
+import java.util.List;
 
 public class Stylish {
 
-    public static String format(final Map<String, Object> diff) {
+    public static String format(final List<Map<String, Object>> diff) {
         StringBuilder result = new StringBuilder();
-        diff.forEach((k, v) -> result.append("  " + k + ": " + v + "\n"));
+        for (Map<String, Object> map : diff) {
+            String status = map.get("status").toString();
+            String name = map.get("fieldName").toString();
+            String value = map.get("value").toString();
+            String oldValue = map.containsKey("oldValue") ? map.get("oldValue").toString() : "";
+            result.append("  ");
+            switch (status) {
+                case "nochanged":
+                    result.append(" ");
+                    break;
+                case "added":
+                    result.append("+");
+                    break;
+                case "updated":
+                    result.append("- " + name + ": " + oldValue + "\n");
+                    result.append("  +");
+                    break;
+                case "removed":
+                    result.append("-");
+                    break;
+                default:
+                    break;
+            }
+            result.append(" " + name)
+                .append(": ")
+                .append(value)
+                .append("\n");
+        }
         result.insert(0, "{\n").append("}");
         return result.toString();
     }
