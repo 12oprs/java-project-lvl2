@@ -2,15 +2,10 @@ package hexlet.code.formatters;
 
 import java.util.Map;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.TreeMap;
 import java.util.Comparator;
 
 public class Json {
-
-    private static final String PATTERN =
-        "(?!null|false|true)\\w+(?=:)|(?!null|false|true)(?<=:)\\b[\\w\\s\\d]+?[^\\d][\\w]\\b(?=\\n)";
 
     private static Map<String, Object> nochangedMap;
     private static Map<String, Object> addedMap;
@@ -20,18 +15,17 @@ public class Json {
         extractData(diff);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\tadded:{\n");
-        addedMap.forEach((k, v) -> sb.append("\t\t" + k + ":" + v + "\n"));
+        sb.append("\t\"added\":{\n");
+        addedMap.forEach((k, v) -> sb.append("\t\t" + inBracesIfNeed(k) + ":" + inBracesIfNeed(v) + "\n"));
         sb.append("\t}\n");
-        sb.append("\tnochanged:{\n");
-        nochangedMap.forEach((k, v) -> sb.append("\t\t" + k + ":" + v + "\n"));
+        sb.append("\t\"nochanged\":{\n");
+        nochangedMap.forEach((k, v) -> sb.append("\t\t" + inBracesIfNeed(k) + ":" + inBracesIfNeed(v) + "\n"));
         sb.append("\t}\n");
-        sb.append("\tremoved:{\n");
-        removedMap.forEach((k, v) -> sb.append("\t\t" + k + ":" + v + "\n"));
+        sb.append("\t\"removed\":{\n");
+        removedMap.forEach((k, v) -> sb.append("\t\t" + inBracesIfNeed(k) + ":" + inBracesIfNeed(v) + "\n"));
         sb.append("\t}\n");
         sb.insert(0, "{\n").append("}");
         String result = sb.toString();
-        result = strInBraces(result);
         return result;
     }
 
@@ -64,15 +58,19 @@ public class Json {
         }
     }
 
-    private static String strInBraces(final String target) {
-        StringBuilder result = new StringBuilder();
-        Pattern p = Pattern.compile(PATTERN);
-        Matcher m = p.matcher(target);
-        while (m.find()) {
-            m.appendReplacement(result, "\"" + m.group() + "\"");
-        }
-        m.appendTail(result);
-        return result.toString();
-    }
 
+    private static String inBracesIfNeed(final Object target) {
+        String result = target.toString();
+        if (!result.equals("null")
+                && !result.equals("true")
+                && !result.equals("false")) {
+            try {
+                double temp = Double.parseDouble(result);
+            } catch (NumberFormatException e) {
+                return "\"" + result + "\"";
+            }
+            return result;
+        }
+        return result;
+    }
 }
