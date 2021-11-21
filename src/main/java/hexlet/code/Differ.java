@@ -16,6 +16,17 @@ public class Differ {
     public static String generate(final String filepath1, final String filepath2, String formatName) throws Exception {
         Map<String, Object> file1 = readFile(filepath1);
         Map<String, Object> file2 = readFile(filepath2);
+        List<Map<String, Object>> diff = findDifferences(file1, file2);
+        return Formatter.format(diff, formatName);
+    }
+
+    private static Map<String, Object> readFile(final String filepath) throws Exception {
+        return Parser.parseFile(Files.readString(Paths.get(filepath)));
+    }
+
+    private static List<Map<String, Object>> findDifferences(
+            final Map<String, Object> file1,
+            final Map<String, Object> file2) {
 
         List<Map<String, Object>> diff = new ArrayList<>();
         for (Map.Entry<String, Object> entry : file1.entrySet()) {
@@ -51,12 +62,6 @@ public class Differ {
                 "fieldName", k,
                 "value", v)));
         diff.sort(Comparator.comparing(map -> map.get("fieldName").toString()));
-
-        return Formatter.format(diff, formatName);
+        return diff;
     }
-
-    private static Map<String, Object> readFile(final String filepath) throws Exception {
-        return Parser.parseFile(Files.readString(Paths.get(filepath)));
-    }
-
 }
