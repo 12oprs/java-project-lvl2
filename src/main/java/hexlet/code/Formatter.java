@@ -11,18 +11,16 @@ class Formatter {
     public static String format(final List<Map<String, Object>> diff, String formatName) throws Exception {
         String result = new String();
         switch (formatName) {
+            case "stylish":
+                return Stylish.format(diff);
             case "plain":
-                result = Plain.format(diff);
-                break;
+                return Plain.format(diff);
             case "no-format":
-                result = diff.toString();
-                break;
+                return diff.toString();
             case "json":
-                result = Json.format(diff);
-                break;
+                return Json.format(diff);
             default:
-                result = Stylish.format(diff);
+                throw new Exception("Unknown format type");
         }
-        return result;
     }
 }
