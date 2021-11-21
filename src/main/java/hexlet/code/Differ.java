@@ -3,6 +3,8 @@ package hexlet.code;
 import java.util.Map;
 import java.util.Comparator;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.List;
@@ -21,7 +23,11 @@ public class Differ {
     }
 
     private static Map<String, Object> readFile(final String filepath) throws Exception {
-        return Parser.parseFile(Files.readString(Paths.get(filepath)));
+        Map<String, Object> result = Parser.parseFile(Files.readString(Paths.get(filepath)));
+        for (Map.Entry<String, Object> entry : result.entrySet()) {
+            result.replace(entry.getKey(), null, "null");
+        }
+        return result;
     }
 
     private static List<Map<String, Object>> findDifferences(
@@ -29,38 +35,33 @@ public class Differ {
             final Map<String, Object> file2) {
 
         List<Map<String, Object>> diff = new ArrayList<>();
-        for (Map.Entry<String, Object> entry : file1.entrySet()) {
-            if (file2.containsKey(entry.getKey())) {
-                if (file2.get(entry.getKey()) == null) {
-                    file2.replace(entry.getKey(), "null");
-                }
-                if (entry.getValue() == null) {
-                    file1.replace(entry.getKey(), "null");
-                }
-                if (file2.get(entry.getKey()).equals(entry.getValue())) {
-                    diff.add(Map.of(
-                            "status", "nochanged",
-                            "fieldName", entry.getKey(),
-                            "value", entry.getValue()));
-                } else {
-                    diff.add(Map.of(
-                            "status", "updated",
-                            "fieldName", entry.getKey(),
-                            "oldValue", entry.getValue(),
-                            "value", file2.get(entry.getKey())));
-                }
-                file2.remove(entry.getKey());
+        Set<String> keys = new HashSet(file1.keySet());
+        keys.addAll(file2.keySet());
+
+        for (String key : keys) {
+            if (!file1.containsKey(key)) {
+                diff.add(Map.of(
+                    "status", "added",
+                    "fieldName", key,
+                    "value", file2.get(key)));
+            } else if (!file2.containsKey(key)) {
+                diff.add(Map.of(
+                    "status", "removed",
+                    "fieldName", key,
+                    "value", file1.get(key)));
+            } else if (file1.get(key).equals(file2.get(key))) {
+                diff.add(Map.of(
+                    "status", "nochanged",
+                    "fieldName", key,
+                    "value", file1.get(key)));
             } else {
                 diff.add(Map.of(
-                        "status", "removed",
-                        "fieldName", entry.getKey(),
-                        "value", entry.getValue()));
+                    "status", "updated",
+                    "fieldName", key,
+                    "oldValue", file1.get(key),
+                    "value", file2.get(key)));
             }
         }
-        file2.forEach((k, v) -> diff.add(Map.of(
-                "status", "added",
-                "fieldName", k,
-                "value", v)));
         diff.sort(Comparator.comparing(map -> map.get("fieldName").toString()));
         return diff;
     }
