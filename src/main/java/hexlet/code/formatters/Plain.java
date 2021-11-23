@@ -5,6 +5,10 @@ import java.util.List;
 
 public class Plain {
 
+    private static final String TEMPLATE_ADDED = "Property '%s' was added with value: %s";
+    private static final String TEMPLATE_REMOVED = "Property '%s' was removed";
+    private static final String TEMPLATE_UPDATED = "Property '%s' was updated. From %s to %s";
+
     public static String format(final List<Map<String, Object>> diff) {
         StringBuilder result = new StringBuilder();
 
@@ -14,16 +18,16 @@ public class Plain {
             String value = formatValue(map.get("value"));
             String oldValue = map.containsKey("oldValue") ? formatValue(map.get("oldValue")) : "";
             switch (status) {
-                case "nochanged":
+                case "unchanged":
                     continue;
                 case "added":
-                    result.append("Property '" + name + "' was added with value: " + value);
+                    result.append(TEMPLATE_ADDED.formatted(name, value));
                     break;
                 case "updated":
-                    result.append("Property '" + name + "' was updated. From " + oldValue + " to " + value);
+                    result.append(TEMPLATE_UPDATED.formatted(name, oldValue, value));
                     break;
                 case "removed":
-                    result.append("Property '" + name + "' was removed");
+                    result.append(TEMPLATE_REMOVED.formatted(name));
                     break;
                 default:
                     break;
