@@ -27,34 +27,12 @@ class AppTest {
     @BeforeAll
     static void preparing() throws Exception {
         String pathToResult = Paths.get(RESOURCE_DIRECTORY, RESULT1).toFile().getAbsolutePath();
-        String[] temp1 = Files.lines(Path.of(pathToResult))
-                .toArray(String[]::new);
-        StringBuilder sb = new StringBuilder();
-        for (String s : temp1) {
-            sb.append(s).append("\n");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        expected = sb.toString();
-
         String pathToPlainResult = Paths.get(RESOURCE_DIRECTORY, RESULT2).toFile().getAbsolutePath();
-        String[] temp2 = Files.lines(Path.of(pathToPlainResult))
-                .toArray(String[]::new);
-        sb.setLength(0);
-        for (String s : temp2) {
-            sb.append(s).append("\n");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        expectedPlain = sb.toString();
-
         String pathToJsonResult = Paths.get(RESOURCE_DIRECTORY, RESULT3).toFile().getAbsolutePath();
-        String[] temp3 = Files.lines(Path.of(pathToJsonResult))
-                .toArray(String[]::new);
-        sb.setLength(0);
-        for (String s : temp3) {
-            sb.append(s).append("\n");
-        }
-        sb.deleteCharAt(sb.length() - 1);
-        expectedJson = sb.toString();   //.replaceAll("\n", "").replaceAll("\t", "");
+
+        expected = Files.readString(Paths.get(pathToResult));
+        expectedPlain = Files.readString(Paths.get(pathToPlainResult));
+        expectedJson = Files.readString(Paths.get(pathToJsonResult));
     }
 
     @Test
