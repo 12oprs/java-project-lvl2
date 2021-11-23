@@ -15,7 +15,7 @@ public class Stylish {
             result.append("  ");
             switch (status) {
                 case "unchanged":
-                    result.append("  ");
+                    result.append(" ");
                     break;
                 case "added":
                     result.append("+");
