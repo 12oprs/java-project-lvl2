@@ -14,8 +14,8 @@ public class Stylish {
             String oldValue = map.containsKey("oldValue") ? map.get("oldValue").toString() : "";
             result.append("  ");
             switch (status) {
-                case "nochanged":
-                    result.append(" ");
+                case "unchanged":
+                    result.append("  ");
                     break;
                 case "added":
                     result.append("+");
