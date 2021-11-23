@@ -23,7 +23,8 @@ public class Differ {
     }
 
     private static Map<String, Object> readFile(final String filepath) throws Exception {
-        Map<String, Object> result = Parser.parseFile(Files.readString(Paths.get(filepath)));
+        String fileType = filepath.substring(filepath.lastIndexOf(".") + 1);
+        Map<String, Object> result = Parser.parse(Files.readString(Paths.get(filepath)), fileType);
         for (Map.Entry<String, Object> entry : result.entrySet()) {
             result.replace(entry.getKey(), null, "null");
         }
@@ -51,7 +52,7 @@ public class Differ {
                     "value", file1.get(key)));
             } else if (file1.get(key).equals(file2.get(key))) {
                 diff.add(Map.of(
-                    "status", "nochanged",
+                    "status", "unchanged",
                     "fieldName", key,
                     "value", file1.get(key)));
             } else {
