@@ -6,7 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeAll;
 import java.nio.file.Paths;
-import java.nio.file.Path;
 import java.nio.file.Files;
 
 class AppTest {
