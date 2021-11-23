@@ -15,7 +15,7 @@ public class Differ {
         return generate(filepath1, filepath2, "stylish");
     }
 
-    public static String generate(final String filepath1, final String filepath2, String formatName) throws Exception {
+    public static String generate(final String filepath1, final String filepath2, final String formatName) throws Exception {
         Map<String, Object> file1 = readFile(filepath1);
         Map<String, Object> file2 = readFile(filepath2);
         List<Map<String, Object>> diff = findDifferences(file1, file2);
