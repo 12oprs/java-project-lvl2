@@ -88,4 +88,12 @@ class AppTest {
         String filePath2 = Paths.get(RESOURCE_DIRECTORY, FILE2).toFile().getAbsolutePath();
         assertEquals(expectedJson, Differ.generate(filePath1, filePath2, "json"));
     }
+
+    @Test
+    @DisplayName("Run app with default formatter")
+    void defaultFormatterTest() throws Exception {
+        String filePath1 = Paths.get(RESOURCE_DIRECTORY, FILE1).toFile().getAbsolutePath();
+        String filePath2 = Paths.get(RESOURCE_DIRECTORY, FILE2).toFile().getAbsolutePath();
+        assertEquals(expected, Differ.generate(filePath1, filePath2));
+    }
 }
