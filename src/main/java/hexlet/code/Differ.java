@@ -42,30 +42,47 @@ public class Differ {
         keys.addAll(file2.keySet());
 
         for (String key : keys) {
+            Object value1 = file1.get(key);
+            Object value2 = file2.get(key);
             if (!file1.containsKey(key)) {
-                diff.add(Map.of(
-                    "status", "added",
-                    "fieldName", key,
-                    "value", file2.get(key)));
+                diff.add(
+                    doEntry("added", key, value2));
             } else if (!file2.containsKey(key)) {
-                diff.add(Map.of(
-                    "status", "removed",
-                    "fieldName", key,
-                    "value", file1.get(key)));
-            } else if (file1.get(key).equals(file2.get(key))) {
-                diff.add(Map.of(
-                    "status", "unchanged",
-                    "fieldName", key,
-                    "value", file1.get(key)));
+                diff.add(
+                    doEntry("removed", key, value1));
+            } else if (value1.equals(value2)) {
+                diff.add(
+                    doEntry("unchanged", key, value1));
             } else {
-                diff.add(Map.of(
-                    "status", "updated",
-                    "fieldName", key,
-                    "oldValue", file1.get(key),
-                    "value", file2.get(key)));
+                diff.add(
+                    doEntry("updated", key, value2, value1));
             }
         }
         diff.sort(Comparator.comparing(map -> map.get("fieldName").toString()));
         return diff;
+    }
+
+    private static Map<String, Object> doEntry(
+            final String status,
+            final String key,
+            final Object value,
+            final Object oldValue) {
+
+        return Map.of(
+            "status", status,
+            "fieldName", key,
+            "value",  value,
+            "oldValue", oldValue);
+    }
+
+    private static Map<String, Object> doEntry(
+            final String status,
+            final String key,
+            final Object value) {
+
+        return Map.of(
+            "status", status,
+            "fieldName", key,
+            "value",  value);
     }
 }
