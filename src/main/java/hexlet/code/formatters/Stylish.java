@@ -11,7 +11,7 @@ public class Stylish {
             String status = map.get("status").toString();
             String name = map.get("fieldName").toString();
             String value = String.valueOf(map.get("value"));
-            String oldValue = map.containsKey("oldValue") ? String.valueOf(map.get("oldValue")) : "";
+            String oldValue = String.valueOf(map.get("oldValue"));
             result.append("  ");
             switch (status) {
                 case "unchanged":

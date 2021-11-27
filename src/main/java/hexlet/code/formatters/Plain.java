@@ -17,7 +17,7 @@ public class Plain {
             String status = map.get("status").toString();
             String name = map.get("fieldName").toString();
             String value = formatValue(map.get("value"));
-            String oldValue = map.containsKey("oldValue") ? formatValue(map.get("oldValue")) : "";
+            String oldValue = formatValue(map.get("oldValue"));
             switch (status) {
                 case "unchanged":
                     continue;
