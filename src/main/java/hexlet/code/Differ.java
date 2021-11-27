@@ -8,6 +8,8 @@ import java.util.Set;
 import java.nio.file.Paths;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
+import java.util.HashMap;
 
 public class Differ {
 
@@ -27,9 +29,6 @@ public class Differ {
     private static Map<String, Object> readFile(final String filepath) throws Exception {
         String fileType = filepath.substring(filepath.lastIndexOf(".") + 1);
         Map<String, Object> result = Parser.parse(Files.readString(Paths.get(filepath)), fileType);
-        for (Map.Entry<String, Object> entry : result.entrySet()) {
-            result.replace(entry.getKey(), null, "null");
-        }
         return result;
     }
 
@@ -50,7 +49,7 @@ public class Differ {
             } else if (!file2.containsKey(key)) {
                 diff.add(
                     doEntry("removed", key, value1));
-            } else if (value1.equals(value2)) {
+            } else if (Objects.equals(value1, value2)) {
                 diff.add(
                     doEntry("unchanged", key, value1));
             } else {
@@ -68,11 +67,12 @@ public class Differ {
             final Object value,
             final Object oldValue) {
 
-        return Map.of(
-            "status", status,
-            "fieldName", key,
-            "value",  value,
-            "oldValue", oldValue);
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", status);
+        result.put("fieldName", key);
+        result.put("value",  value);
+        result.put("oldValue", oldValue);
+        return result;
     }
 
     private static Map<String, Object> doEntry(
@@ -80,9 +80,10 @@ public class Differ {
             final String key,
             final Object value) {
 
-        return Map.of(
-            "status", status,
-            "fieldName", key,
-            "value",  value);
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", status);
+        result.put("fieldName", key);
+        result.put("value",  value);
+        return result;
     }
 }

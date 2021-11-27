@@ -41,8 +41,8 @@ public class Plain {
 
     private static String formatValue(final Object o) {
         String result;
-        if (o instanceof Number || o instanceof Boolean || o.equals("null")) {
-            result = o.toString();
+        if (o instanceof Number || o instanceof Boolean || o == null) {
+            result = String.valueOf(o);
         } else if (o instanceof String) {
             result = "'" + o + "'";
         } else {

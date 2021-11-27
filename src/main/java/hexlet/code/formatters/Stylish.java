@@ -10,8 +10,8 @@ public class Stylish {
         for (Map<String, Object> map : diff) {
             String status = map.get("status").toString();
             String name = map.get("fieldName").toString();
-            String value = map.get("value").toString();
-            String oldValue = map.containsKey("oldValue") ? map.get("oldValue").toString() : "";
+            String value = String.valueOf(map.get("value"));
+            String oldValue = map.containsKey("oldValue") ? String.valueOf(map.get("oldValue")) : "";
             result.append("  ");
             switch (status) {
                 case "unchanged":
