@@ -1,6 +1,7 @@
 package hexlet.code.formatters;
 
 import java.util.Map;
+import java.util.Collection;
 import java.util.List;
 
 public class Plain {
@@ -41,12 +42,12 @@ public class Plain {
 
     private static String formatValue(final Object o) {
         String result;
-        if (o instanceof Number || o instanceof Boolean || o == null) {
-            result = String.valueOf(o);
+        if (o instanceof Collection || o instanceof Map || o instanceof Object[]) {
+            result = "[complex value]";
         } else if (o instanceof String) {
             result = "'" + o + "'";
         } else {
-            result = "[complex value]";
+            result = String.valueOf(o);
         }
         return result;
     }
